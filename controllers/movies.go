@@ -11,14 +11,14 @@ import (
 )
 
 func GetWatchlist(c *gin.Context) {
-	user_id, err := token.ExtractTokenID(c)
+	userId, err := token.ExtractTokenID(c)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	wl, err := models.GetMoviesByUserID(user_id)
+	wl, err := models.GetMoviesByUserID(userId)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -37,7 +37,7 @@ type WatchlistInput struct {
 
 func AddToWatchlist(c *gin.Context) {
 
-	user_id, err := token.ExtractTokenID(c)
+	userId, err := token.ExtractTokenID(c)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -57,7 +57,7 @@ func AddToWatchlist(c *gin.Context) {
 	wl.Overview = input.Overview
 	wl.MovieID = input.MovieId
 	wl.Image = input.Image
-	wl.UserID = user_id
+	wl.UserID = userId
 	wl.ReleaseDate = nil
 
 	newMovie, err := wl.SaveMovieToWatchlist()
@@ -72,7 +72,7 @@ func AddToWatchlist(c *gin.Context) {
 
 func DeleteFromWatchlist(c *gin.Context) {
 
-	user_id, err := token.ExtractTokenID(c)
+	userId, err := token.ExtractTokenID(c)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -81,7 +81,7 @@ func DeleteFromWatchlist(c *gin.Context) {
 
 	id := c.Param("id")
 
-	if err := models.DeleteMovieFromWatchlistByID(id, user_id); err != nil {
+	if err := models.DeleteMovieFromWatchlistByID(id, userId); err != nil {
 		switch {
 		case errors.Is(err, gorm.ErrRecordNotFound):
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

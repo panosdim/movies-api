@@ -20,7 +20,7 @@ func GetUserByID(uid uint) (User, error) {
 	var u User
 
 	if err := DB.First(&u, uid).Error; err != nil {
-		return u, errors.New("User not found")
+		return u, errors.New("user not found")
 	}
 
 	u.PrepareGive()
@@ -48,11 +48,11 @@ func LoginCheck(email string, password string) (string, error) {
 		return "", err
 	}
 
-	token, err := token.GenerateToken(u.ID)
+	jwt, err := token.GenerateToken(u.ID)
 
 	if err != nil {
 		return "", err
 	}
 
-	return token, nil
+	return jwt, nil
 }

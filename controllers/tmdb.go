@@ -25,7 +25,7 @@ func GetPopularMovies(c *gin.Context) {
 }
 
 func UpdateReleaseDates(c *gin.Context) {
-	user_id, err := token.ExtractTokenID(c)
+	userId, err := token.ExtractTokenID(c)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -33,11 +33,11 @@ func UpdateReleaseDates(c *gin.Context) {
 	}
 
 	// Find all movies without release release_date
-	movies := models.GetMoviesWithoutReleaseDateByUserID(user_id)
+	movies := models.GetMoviesWithoutReleaseDateByUserID(userId)
 
 	for _, movie := range movies {
 		movie.UpdateReleaseDate()
-		movie.UpdateMovie()
+		_ = movie.UpdateMovie()
 	}
 
 	c.JSON(http.StatusNoContent, nil)

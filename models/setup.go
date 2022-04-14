@@ -27,7 +27,7 @@ func ConnectDataBase() {
 	DbName := os.Getenv("DB_NAME")
 	DbPort := os.Getenv("DB_PORT")
 
-	DBUrl := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", DbUser, DbPassword, DbHost, DbPort, DbName)
+	DBUrl := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=False&loc=Local", DbUser, DbPassword, DbHost, DbPort, DbName)
 
 	DB, err = gorm.Open(DbDriver, DBUrl)
 
@@ -42,7 +42,7 @@ func ConnectDataBase() {
 	DB.AutoMigrate(&Movie{})
 
 	// Initialize TMDb API library
-	TMDbClient, err = tmdb.Init(os.Getenv("TMDd_KEY"))
+	TMDbClient, err = tmdb.Init(os.Getenv("TMDB_KEY"))
 	if err != nil {
 		log.Fatal("TMDb connection error:", err)
 	}

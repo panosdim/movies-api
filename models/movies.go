@@ -51,11 +51,11 @@ func (movie *Movie) UpdateReleaseDate() {
 	} else {
 		var releaseDate *time.Time = nil
 		for _, result := range movieInfo.MovieReleaseDatesResults.Results {
-			for _, release_date := range result.ReleaseDates {
-				if release_date.Type > 3 {
-					relDate, err := time.Parse(time.RFC3339Nano, release_date.ReleaseDate)
+			for _, movieReleaseDate := range result.ReleaseDates {
+				if movieReleaseDate.Type > 3 {
+					relDate, err := time.Parse(time.RFC3339Nano, movieReleaseDate.ReleaseDate)
 					if err != nil {
-						log.Println("Error decoding date", release_date.ReleaseDate)
+						log.Println("Error decoding date", movieReleaseDate.ReleaseDate)
 					} else {
 						if releaseDate == nil {
 							releaseDate = &relDate

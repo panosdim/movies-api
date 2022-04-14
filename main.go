@@ -40,6 +40,7 @@ func main() {
 		private.POST("/autocomplete", controllers.AutocompleteSearch)
 	}
 
+	//goland:noinspection GoUnhandledErrorResult
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 
 }
