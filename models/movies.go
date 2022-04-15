@@ -19,7 +19,7 @@ func (Movie) TableName() string {
 }
 
 type Movie struct {
-	ID          uint    `gorm:"primary_key"`
+	ID          uint    `gorm:"primary_key" json:"id"`
 	UserID      uint    `json:"user_id"`
 	Title       string  `json:"title"`
 	Overview    string  `json:"overview"`
