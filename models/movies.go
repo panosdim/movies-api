@@ -29,13 +29,13 @@ type Movie struct {
 }
 
 func GetMoviesByUserID(uid uint) ([]Movie, error) {
-	var wl []Movie
+	var movies []Movie
 
-	if err := DB.Find(&wl, "user_id = ?", uid).Error; err != nil {
-		return wl, fmt.Errorf("watchlist for user id %d not found", uid)
+	if err := DB.Find(&movies, "user_id = ?", uid).Error; err != nil {
+		return movies, fmt.Errorf("watchlist for user id %d not found", uid)
 	}
 
-	return wl, nil
+	return movies, nil
 
 }
 

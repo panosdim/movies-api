@@ -37,22 +37,22 @@ func VerifyPassword(password, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
-func LoginCheck(email string, password string) (string, error) {
+func LoginCheck(email string, password string) (string, User, error) {
 	u := User{}
 
 	if err := DB.Model(User{}).Where("email = ?", email).Take(&u).Error; err != nil {
-		return "", err
+		return "", u, err
 	}
 
 	if err := VerifyPassword(password, u.Password); err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
-		return "", err
+		return "", u, err
 	}
 
 	jwt, err := token.GenerateToken(u.ID)
 
 	if err != nil {
-		return "", err
+		return "", u, err
 	}
 
-	return jwt, nil
+	return jwt, u, nil
 }

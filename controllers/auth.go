@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"movies-backend/models"
 	"movies-backend/utils/token"
 	"net/http"
@@ -46,13 +47,20 @@ func Login(c *gin.Context) {
 	u.Email = input.Email
 	u.Password = input.Password
 
-	jwt, err := models.LoginCheck(u.Email, u.Password)
+	jwt, user, err := models.LoginCheck(u.Email, u.Password)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "email or password is incorrect."})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": jwt})
+	userData := map[string]string{
+		"id":        fmt.Sprint(user.ID),
+		"email":     user.Email,
+		"firstName": user.FirstName,
+		"lastName":  user.LastName,
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": jwt, "user": userData})
 
 }

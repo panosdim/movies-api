@@ -16,6 +16,7 @@ func main() {
 	models.ConnectDataBase()
 
 	r := gin.Default()
+	r.Use(middlewares.CORSMiddleware())
 
 	public := r.Group("/api")
 
