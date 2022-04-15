@@ -1,0 +1,14 @@
+[Unit]
+Description=Script to start movies REST API server
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5s
+User=root
+Environment=GIN_MODE=release
+WorkingDirectory=/opt/movies
+ExecStart=/opt/ths/movies
+
+[Install]
+WantedBy=multi-user.target
