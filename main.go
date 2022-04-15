@@ -18,7 +18,7 @@ func main() {
 	r := gin.Default()
 	r.Use(middlewares.CORSMiddleware())
 
-	public := r.Group("/")
+	public := r.Group("/api")
 
 	public.POST("/login", controllers.Login)
 
@@ -28,7 +28,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"version": "1.0"})
 	})
 
-	private := r.Group("/")
+	private := r.Group("/api")
 
 	private.Use(middlewares.JwtAuthMiddleware())
 	{
