@@ -8,7 +8,7 @@ RestartSec=5s
 User=root
 Environment=GIN_MODE=release
 WorkingDirectory=/opt/movies
-ExecStart=/opt/ths/movies
+ExecStart=/opt/movies/movies
 
 [Install]
 WantedBy=multi-user.target
