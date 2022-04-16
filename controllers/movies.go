@@ -29,10 +29,10 @@ func GetWatchlist(c *gin.Context) {
 }
 
 type WatchlistInput struct {
-	Title    string `form:"title" binding:"required"`
-	Overview string `form:"overview" binding:"required"`
-	MovieId  uint   `form:"movie_id" binding:"required"`
-	Image    string `form:"image"`
+	Title    string `json:"title" binding:"required"`
+	Overview string `json:"overview" binding:"required"`
+	MovieId  uint   `json:"movie_id" binding:"required"`
+	Image    string `json:"image"`
 }
 
 func AddToWatchlist(c *gin.Context) {
@@ -46,7 +46,7 @@ func AddToWatchlist(c *gin.Context) {
 
 	var input WatchlistInput
 
-	if err := c.ShouldBind(&input); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

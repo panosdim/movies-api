@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"movies-backend/controllers"
 	"movies-backend/middlewares"
 	"movies-backend/models"
@@ -41,7 +42,7 @@ func main() {
 		private.POST("/autocomplete", controllers.AutocompleteSearch)
 	}
 
-	//goland:noinspection GoUnhandledErrorResult
-	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
-
+	if err := r.Run(fmt.Sprintf(":%s", os.Getenv("PORT"))); err != nil {
+		log.Fatalf("Error starting server")
+	}
 }
