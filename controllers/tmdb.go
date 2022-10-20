@@ -68,7 +68,7 @@ func SearchForMovie(c *gin.Context) {
 		"include_adult": "false",
 	}
 
-	movies, _ := models.TMDbClient.GetSearchMovies(input.Term, options)
+	movies, _ := models.TMDbClient.GetSearchMulti(input.Term, options)
 
 	c.JSON(http.StatusOK, movies)
 }
