@@ -68,7 +68,7 @@ func SearchForMovie(c *gin.Context) {
 		"include_adult": "false",
 	}
 
-	movies, _ := models.TMDbClient.GetSearchMulti(input.Term, options)
+	movies, _ := models.TMDbClient.GetSearchMovies(input.Term, options)
 
 	c.JSON(http.StatusOK, movies)
 }
@@ -97,7 +97,7 @@ func AutocompleteSearch(c *gin.Context) {
 	movies, _ := models.TMDbClient.GetSearchMovies(input.Term, options)
 
 	var autocompleteResults [][3]string
-	const imageURL = "https://image.tmdb.org/t/p/w45_and_h67_bestv2"
+	const imageURL = "https://image.tmdb.org/t/p/w92"
 
 	for _, movie := range movies.Results {
 		if len(movie.PosterPath) > 0 {
