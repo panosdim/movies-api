@@ -38,7 +38,7 @@ if [ -f .env ] && [ -f movies ] && [ -f movies.service ]; then
         cp movies.service /usr/lib/systemd/system
         systemctl start movies.service
         systemctl enable movies.service
-	cp movies.conf $NGINX_CONF_PATH
+	    cp movies.conf $NGINX_CONF_PATH
         nginx -s reload
     fi
 else

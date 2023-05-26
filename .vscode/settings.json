@@ -8,6 +8,7 @@
         "gorm",
         "joho",
         "Tabler",
-        "tmdb"
+        "tmdb",
+        "watchlist"
     ]
 }
