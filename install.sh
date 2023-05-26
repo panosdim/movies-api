@@ -10,10 +10,10 @@ is_service_exists() {
     else
         return 1
     fi
-    unset x
 }
 
 INSTALL_PATH=/opt/movies
+NGINX_CONF_PATH=/etc/nginx/conf.d
 
 # Build software
 go build -o movies
@@ -38,6 +38,8 @@ if [ -f .env ] && [ -f movies ] && [ -f movies.service ]; then
         cp movies.service /usr/lib/systemd/system
         systemctl start movies.service
         systemctl enable movies.service
+	cp movies.conf $NGINX_CONF_PATH
+        nginx -s reload
     fi
 else
     echo "Not all needed files found. Installation failed."
