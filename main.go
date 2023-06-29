@@ -6,10 +6,13 @@ import (
 	"movies-backend/controllers"
 	"movies-backend/middlewares"
 	"movies-backend/models"
+	"movies-backend/utils"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-co-op/gocron"
 )
 
 func main() {
@@ -41,6 +44,13 @@ func main() {
 		private.POST("/search", controllers.SearchForMovie)
 		private.POST("/autocomplete", controllers.AutocompleteSearch)
 	}
+
+	// Schedule movies release date updates every day
+	s := gocron.NewScheduler(time.UTC)
+	if _, err := s.Every(60).Seconds().Do(func() { utils.CheckForAvailableMovies() }); err != nil {
+		log.Fatalf("Error starting cron job")
+	}
+	s.StartAsync()
 
 	if err := r.Run(fmt.Sprintf(":%s", os.Getenv("PORT"))); err != nil {
 		log.Fatalf("Error starting server")

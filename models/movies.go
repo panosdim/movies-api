@@ -26,6 +26,7 @@ type Movie struct {
 	ReleaseDate *string `json:"release_date"`
 	Image       string  `json:"image"`
 	MovieID     uint    `json:"movie_id"`
+	EmailSent   bool    `json:"email_sent"`
 }
 
 func GetMoviesByUserID(uid uint) ([]Movie, error) {
