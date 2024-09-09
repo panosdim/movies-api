@@ -27,17 +27,29 @@ type Movie struct {
 	Image       string  `json:"image"`
 	MovieID     uint    `json:"movie_id"`
 	EmailSent   bool    `json:"email_sent"`
+	Downloaded  bool    `gorm:"default:false" json:"downloaded"`
+	Watched     bool    `gorm:"default:false" json:"watched"`
+	Rating      *int    `gorm:"default:null" json:"rating"`
+}
+
+func GetWatchlistByUserID(uid uint) ([]Movie, error) {
+	var movies []Movie
+
+	if err := DB.Find(&movies, "user_id = ? AND downloaded = ?", uid, false).Error; err != nil {
+		return movies, fmt.Errorf("watchlist for user id %d not found", uid)
+	}
+
+	return movies, nil
 }
 
 func GetMoviesByUserID(uid uint) ([]Movie, error) {
 	var movies []Movie
 
-	if err := DB.Find(&movies, "user_id = ?", uid).Error; err != nil {
-		return movies, fmt.Errorf("watchlist for user id %d not found", uid)
+	if err := DB.Find(&movies, "user_id = ? AND downloaded = ?", uid, true).Error; err != nil {
+		return movies, fmt.Errorf("movies for user id %d not found", uid)
 	}
 
 	return movies, nil
-
 }
 
 func (movie *Movie) UpdateMovie() error {
@@ -105,6 +117,60 @@ func DeleteMovieFromWatchlistByID(id string, uid uint) error {
 	}
 
 	if err := DB.Delete(&wl).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func MarkMovieAsDownloadedByID(id string, uid uint) error {
+	var wl Movie
+
+	if err := DB.First(&wl, id).Error; err != nil {
+		return err
+	}
+
+	if wl.UserID != uid {
+		return ErrMovieNotOwned
+	}
+
+	if err := DB.Model(&wl).Update("downloaded", true).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func MarkMovieAsWatchedByID(id string, uid uint) error {
+	var wl Movie
+
+	if err := DB.First(&wl, id).Error; err != nil {
+		return err
+	}
+
+	if wl.UserID != uid {
+		return ErrMovieNotOwned
+	}
+
+	if err := DB.Model(&wl).Update("watched", true).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RateMovieByID(id string, uid uint, rating uint) error {
+	var wl Movie
+
+	if err := DB.First(&wl, id).Error; err != nil {
+		return err
+	}
+
+	if wl.UserID != uid {
+		return ErrMovieNotOwned
+	}
+
+	if err := DB.Model(&wl).Update("rating", rating).Error; err != nil {
 		return err
 	}
 

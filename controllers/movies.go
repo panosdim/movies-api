@@ -18,6 +18,24 @@ func GetWatchlist(c *gin.Context) {
 		return
 	}
 
+	wl, err := models.GetWatchlistByUserID(userId)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, wl)
+}
+
+func GetMovies(c *gin.Context) {
+	userId, err := token.ExtractTokenID(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	wl, err := models.GetMoviesByUserID(userId)
 
 	if err != nil {
@@ -82,6 +100,95 @@ func DeleteFromWatchlist(c *gin.Context) {
 	id := c.Param("id")
 
 	if err := models.DeleteMovieFromWatchlistByID(id, userId); err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		case errors.Is(err, models.ErrMovieNotOwned):
+			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		default:
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+func MarkMovieAsDownloaded(c *gin.Context) {
+
+	userId, err := token.ExtractTokenID(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id := c.Param("id")
+
+	if err := models.MarkMovieAsDownloadedByID(id, userId); err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		case errors.Is(err, models.ErrMovieNotOwned):
+			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		default:
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+func MarkMovieAsWatched(c *gin.Context) {
+
+	userId, err := token.ExtractTokenID(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id := c.Param("id")
+
+	if err := models.MarkMovieAsWatchedByID(id, userId); err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		case errors.Is(err, models.ErrMovieNotOwned):
+			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		default:
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+type RatingInput struct {
+	Rating uint `json:"rating" binding:"required"`
+}
+
+func RateMovie(c *gin.Context) {
+
+	userId, err := token.ExtractTokenID(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id := c.Param("id")
+
+	var input RatingInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := models.RateMovieByID(id, userId, input.Rating); err != nil {
 		switch {
 		case errors.Is(err, gorm.ErrRecordNotFound):
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
