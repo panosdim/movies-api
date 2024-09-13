@@ -42,6 +42,7 @@ func main() {
 		private.POST("/watchlist", controllers.AddToWatchlist)
 		private.POST("/movies/mark/downloaded/:id", controllers.MarkMovieAsDownloaded)
 		private.POST("/movies/mark/watched/:id", controllers.MarkMovieAsWatched)
+		private.GET("/movies/suggestion", controllers.MoviesSuggestion)
 		private.POST("/movies/rate/:id", controllers.RateMovie)
 		private.DELETE("/watchlist/:id", controllers.DeleteFromWatchlist)
 		private.GET("/update", controllers.UpdateReleaseDates)

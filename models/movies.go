@@ -22,14 +22,13 @@ type Movie struct {
 	ID          uint    `gorm:"primary_key" json:"id"`
 	UserID      uint    `json:"user_id"`
 	Title       string  `json:"title"`
-	Overview    string  `json:"overview"`
 	ReleaseDate *string `json:"release_date"`
 	Image       string  `json:"image"`
 	MovieID     uint    `json:"movie_id"`
 	EmailSent   bool    `json:"email_sent"`
 	Downloaded  bool    `gorm:"default:false" json:"downloaded"`
 	Watched     bool    `gorm:"default:false" json:"watched"`
-	Rating      *int    `gorm:"default:null" json:"rating"`
+	Rating      uint    `gorm:"default:0" json:"rating"`
 }
 
 func GetWatchlistByUserID(uid uint) ([]Movie, error) {

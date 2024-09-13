@@ -1,10 +1,15 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"movies-backend/models"
 	"movies-backend/utils/mail"
+	"strings"
 	"time"
+
+	"github.com/google/generative-ai-go/genai"
+	"github.com/patrickmn/go-cache"
 )
 
 const (
@@ -47,6 +52,43 @@ func CheckForAvailableMovies() {
 					movie.UpdateMovie()
 				}
 			}
+		}
+	}
+}
+
+func GetTextResponse(resp *genai.GenerateContentResponse) (string, error) {
+	if len(resp.Candidates) == 0 {
+		return "", fmt.Errorf("no candidates found in response")
+	}
+
+	// Initialize a strings.Builder to accumulate content from all candidates
+	var allCandidatesContent strings.Builder
+
+	// Process each candidate's content
+	for _, candidate := range resp.Candidates {
+		for _, part := range candidate.Content.Parts {
+			// Handle different types of parts by type assertion
+			switch p := part.(type) {
+			case genai.Text:
+				// Part is a Text type, accumulate the content
+				allCandidatesContent.WriteString(string(p))
+			default:
+				return "", fmt.Errorf("unhandled part type: %T", part)
+			}
+		}
+	}
+	return allCandidatesContent.String(), nil
+}
+
+// Create a cache with a default expiration time of 24 hours, and purge every 12 hours
+var MovieSuggestionCache = cache.New(24*time.Hour, 12*time.Hour)
+
+// Function to clear the cache for a specific user
+func ClearUserMovieSuggestionCache(uid uint) {
+	// Iterate through all cache keys and delete keys related to the user
+	for k := range MovieSuggestionCache.Items() {
+		if strings.HasPrefix(k, fmt.Sprintf("moviesuggestion-%d-", uid)) {
+			MovieSuggestionCache.Delete(k)
 		}
 	}
 }
