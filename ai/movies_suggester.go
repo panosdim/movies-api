@@ -38,12 +38,11 @@ func GetMoviesSuggestion(uid uint, numMovies int) ([]PopularMovie, error) {
 	defer client.Close()
 
 	// Using `ResponseMIMEType` requires either a Gemini 1.5 Pro or 1.5 Flash model
-	model := client.GenerativeModel("gemini-1.5-pro")
+	model := client.GenerativeModel(os.Getenv("AI_MODEL"))
 
 	model.SetTemperature(1)
 	model.SetTopK(64)
 	model.SetTopP(0.95)
-	model.SetMaxOutputTokens(8192)
 	model.ResponseMIMEType = "text/plain"
 	model.SystemInstruction = &genai.Content{
 		Parts: []genai.Part{genai.Text("You are a movie expert.")},

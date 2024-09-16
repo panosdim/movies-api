@@ -81,7 +81,7 @@ func GetTextResponse(resp *genai.GenerateContentResponse) (string, error) {
 }
 
 // Create a cache with a default expiration time of 24 hours, and purge every 12 hours
-var MovieSuggestionCache = cache.New(24*time.Hour, 12*time.Hour)
+var MovieSuggestionCache = cache.New(30*24*time.Hour, 12*time.Hour)
 
 // Function to clear the cache for a specific user
 func ClearUserMovieSuggestionCache(uid uint) {
