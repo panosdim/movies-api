@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"movies-backend/models"
 	"movies-backend/utils"
 	"os"
@@ -215,7 +216,9 @@ func GetMoviesSuggestion(uid uint, numMovies int) ([]PopularMovie, error) {
 		if movie, ok := popularMoviesMap[int64(m.ID)]; ok {
 			movieResults = append(movieResults, movie)
 		} else {
-			return nil, fmt.Errorf("failed to find movie id: %d", m.ID)
+			// Print a warning message in the console
+			log.Printf("Warning: Failed to find movie with ID: %d and title: %s", m.ID, m.Title)
+			log.Printf("popularMoviesMap contents: %+v", popularMoviesMap)
 		}
 	}
 
