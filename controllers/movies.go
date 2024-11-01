@@ -50,9 +50,9 @@ func GetMovies(c *gin.Context) {
 }
 
 type WatchlistInput struct {
-	Title    string `json:"title" binding:"required"`
-	MovieId  uint   `json:"movie_id" binding:"required"`
-	Image    string `json:"image"`
+	Title   string `json:"title" binding:"required"`
+	MovieId uint   `json:"movie_id" binding:"required"`
+	Image   string `json:"image"`
 }
 
 func AddToWatchlist(c *gin.Context) {
@@ -114,6 +114,7 @@ func DeleteFromWatchlist(c *gin.Context) {
 		return
 	}
 
+	go utils.TriggerModelRetrain()
 	utils.ClearUserMovieSuggestionCache(userId)
 
 	c.JSON(http.StatusNoContent, nil)
@@ -204,6 +205,8 @@ func RateMovie(c *gin.Context) {
 		}
 		return
 	}
+
+	go utils.TriggerModelRetrain()
 
 	utils.ClearUserMovieSuggestionCache(userId)
 

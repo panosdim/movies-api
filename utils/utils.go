@@ -2,13 +2,15 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"movies-backend/models"
 	"movies-backend/utils/mail"
+	"net/http"
+	"os"
 	"strings"
 	"time"
 
-	"github.com/google/generative-ai-go/genai"
 	"github.com/patrickmn/go-cache"
 )
 
@@ -56,30 +58,6 @@ func CheckForAvailableMovies() {
 	}
 }
 
-func GetTextResponse(resp *genai.GenerateContentResponse) (string, error) {
-	if len(resp.Candidates) == 0 {
-		return "", fmt.Errorf("no candidates found in response")
-	}
-
-	// Initialize a strings.Builder to accumulate content from all candidates
-	var allCandidatesContent strings.Builder
-
-	// Process each candidate's content
-	for _, candidate := range resp.Candidates {
-		for _, part := range candidate.Content.Parts {
-			// Handle different types of parts by type assertion
-			switch p := part.(type) {
-			case genai.Text:
-				// Part is a Text type, accumulate the content
-				allCandidatesContent.WriteString(string(p))
-			default:
-				return "", fmt.Errorf("unhandled part type: %T", part)
-			}
-		}
-	}
-	return allCandidatesContent.String(), nil
-}
-
 // Create a cache with a default expiration time of 24 hours, and purge every 12 hours
 var MovieSuggestionCache = cache.New(30*24*time.Hour, 12*time.Hour)
 
@@ -90,5 +68,26 @@ func ClearUserMovieSuggestionCache(uid uint) {
 		if strings.HasPrefix(k, fmt.Sprintf("moviesuggestion-%d-", uid)) {
 			MovieSuggestionCache.Delete(k)
 		}
+	}
+}
+
+func TriggerModelRetrain() {
+	// Call train API to retrain the movies suggestion model
+	// Make GET request to suggestions API
+	resp, err := http.Get(os.Getenv("MOVIES_ML_BASE_URL") + "/train")
+	if err != nil {
+		log.Println("failed to call train API: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// Read response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("failed to read response body: %w", err)
+	}
+
+	// Check response status
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("train API returned status %d: %s", resp.StatusCode, string(body))
 	}
 }
