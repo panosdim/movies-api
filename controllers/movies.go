@@ -86,6 +86,7 @@ func AddToWatchlist(c *gin.Context) {
 		return
 	}
 
+	go utils.TriggerModelRetrain()
 	utils.ClearUserMovieSuggestionCache(userId)
 
 	c.JSON(http.StatusCreated, newMovie)
@@ -233,7 +234,11 @@ func MoviesSuggestion(c *gin.Context) {
 	wl, err := ai.GetMoviesSuggestion(userId, numMovies)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		if err == ai.ErrModelNotReady {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
 		return
 	}
 

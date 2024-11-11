@@ -2,6 +2,7 @@ package ai
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"movies-backend/utils"
@@ -37,6 +38,9 @@ func GetMoviesSuggestion(uid uint, numMovies int) ([]Suggestion, error) {
 	// Check response status
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
+		if resp.StatusCode == http.StatusServiceUnavailable {
+			return nil, ErrModelNotReady
+		}
 		return nil, fmt.Errorf("suggestions API returned status %d: %s", resp.StatusCode, string(body))
 	}
 
@@ -51,3 +55,6 @@ func GetMoviesSuggestion(uid uint, numMovies int) ([]Suggestion, error) {
 
 	return suggestions, nil
 }
+
+// ErrModelNotReady is returned when the model is not ready yet
+var ErrModelNotReady = errors.New("model is not ready yet")
