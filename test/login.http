@@ -1,0 +1,84 @@
+/*
+# Successfull Login
+*/
+POST /api/login HTTP/1.1
+Host: {{DB_HOST}}:{{PORT}}
+Content-Type: multipart/form-data; boundary=WebKitFormBoundary
+
+--WebKitFormBoundary
+Content-Disposition: form-data; name="email"
+
+{{EMAIL}}
+--WebKitFormBoundary
+Content-Disposition: form-data; name="password"
+
+{{PASSWORD}}
+--WebKitFormBoundary--
+
+?? status == 200
+
+{{
+  $global.token=response.parsedBody.token;
+}}
+
+HTTP/1.1 200  - OK
+access-control-allow-credentials: true
+access-control-allow-headers: Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With
+access-control-allow-methods: POST, OPTIONS, GET, PUT, DELETE
+access-control-allow-origin: *
+content-type: application/json; charset=utf-8
+date: Thu, 13 Mar 2025 14:44:51 GMT
+content-length: 253
+connection: close
+/*
+# Wrong password
+*/
+###
+POST /api/login HTTP/1.1
+Host: {{DB_HOST}}:{{PORT}}
+Content-Type: multipart/form-data; boundary=WebKitFormBoundary
+
+--WebKitFormBoundary
+Content-Disposition: form-data; name="email"
+
+{{EMAIL}}
+--WebKitFormBoundary
+Content-Disposition: form-data; name="password"
+
+wrong password
+--WebKitFormBoundary--
+
+?? status == 400
+
+HTTP/1.1 400  - Bad Request
+access-control-allow-credentials: true
+access-control-allow-headers: Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With
+access-control-allow-methods: POST, OPTIONS, GET, PUT, DELETE
+access-control-allow-origin: *
+content-type: application/json; charset=utf-8
+date: Thu, 13 Mar 2025 14:47:37 GMT
+content-length: 43
+connection: close
+/*
+# Missing required parameter
+*/
+###
+POST /api/login HTTP/1.1
+Host: localhost:8001
+Content-Type: application/json
+
+{
+	"email": "panosdim@gmail.com"
+}
+
+?? status == 400
+
+HTTP/1.1 400  - Bad Request
+access-control-allow-credentials: true
+access-control-allow-headers: Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With
+access-control-allow-methods: POST, OPTIONS, GET, PUT, DELETE
+access-control-allow-origin: *
+content-type: application/json; charset=utf-8
+date: Thu, 13 Mar 2025 14:49:17 GMT
+content-length: 105
+connection: close

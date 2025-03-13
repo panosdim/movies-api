@@ -14,5 +14,23 @@
         "Tabler",
         "tmdb",
         "watchlist"
-    ]
+    ],
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "DB",
+            "database": "movies",
+            "username": "root",
+            "password": ""
+        }
+    ],
+    "IDX.aI.enableInlineCompletion": true,
+    "IDX.aI.enableCodebaseIndexing": true
 }

@@ -1,0 +1,21 @@
+GET /api/version HTTP/1.1
+Host: {{DB_HOST}}:{{PORT}}
+
+?? status == 200
+
+{{
+  const assert = require('assert');
+  test("version is 1.0", () => {
+    assert.equal(response.parsedBody.version, "1.0");
+  });
+}}
+
+HTTP/1.1 200  - OK
+access-control-allow-credentials: true
+access-control-allow-headers: Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With
+access-control-allow-methods: POST, OPTIONS, GET, PUT, DELETE
+access-control-allow-origin: *
+content-type: application/json; charset=utf-8
+date: Thu, 13 Mar 2025 14:02:14 GMT
+content-length: 17
+connection: close
