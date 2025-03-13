@@ -19,7 +19,6 @@
       "golang.go"
       "mtxr.sqltools"
       "mtxr.sqltools-driver-mysql"
-      "anweber.httpbook"
     ];
     workspace = {
       onCreate = {
